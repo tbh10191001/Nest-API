@@ -1,0 +1,197 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Person {
+    personID    Int       @id @default(autoincrement())
+    firstName   String
+    lastName    String
+    dob         DateTime  @db.Date
+    address     String
+    numberPhone String    @unique
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    customer    Customer?
+    staff       Staff?
+    admin       Admin?
+
+    @@map("person")
+}
+
+model Customer {
+    customerID      Int               @id
+    customer        Person            @relation(fields: [customerID], references: [personID])
+    deliveryAddress deliveryAddress[]
+    cart            Cart[]
+    orders          Order[]
+    account         Account           @relation(fields: [accountID], references: [accountID])
+    accountID       Int               @unique
+
+    @@map("customer")
+}
+
+model Staff {
+    staffID   Int     @id
+    staff     Person  @relation(fields: [staffID], references: [personID])
+    account   Account @relation(fields: [accountID], references: [accountID])
+    accountID Int     @unique
+
+    @@map("staff")
+}
+
+model Admin {
+    adminID        Int              @id
+    admin          Person           @relation(fields: [adminID], references: [personID])
+    account        Account          @relation(fields: [accountID], references: [accountID])
+    accountID      Int              @unique
+    productReceipt ProductReceipt[]
+
+    @@map("admin")
+}
+
+model Account {
+    accountID Int       @id @default(autoincrement())
+    email     String    @unique
+    password  String
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    roleID    Int
+    role      Role      @relation(fields: [roleID], references: [roleID])
+    customer  Customer?
+    staff     Staff?
+    admin     Admin?
+
+    @@map("account")
+}
+
+model Role {
+    roleID   Int       @id @default(autoincrement())
+    account  Account[]
+    roleName String
+
+    @@map("role")
+}
+
+model Product {
+    productID             Int                     @id @default(autoincrement())
+    productName           String                  @unique
+    productPrice          BigInt
+    productCount          BigInt
+    productNote           String?
+    createdAt             DateTime                @default(now())
+    updatedAt             DateTime                @updatedAt
+    typeOfProductID       Int
+    typeOfProduct         TypeOfProduct           @relation(fields: [typeOfProductID], references: [typeID])
+    discountID            Int?
+    discount              Discount?               @relation(fields: [discountID], references: [discountID])
+    Cart                  Cart[]
+    orderDetails          OrderDetails[]
+    productReceiptDetails ProductReceiptDetails[]
+
+    @@map("product")
+}
+
+model TypeOfProduct {
+    typeID    Int       @id @default(autoincrement())
+    typeName  String    @unique
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    product   Product[]
+
+    @@map("typeofproduct")
+}
+
+model Discount {
+    discountID      Int       @id @default(autoincrement())
+    discountPercent Int       @default(0)
+    startDate       DateTime
+    endDate         DateTime
+    createdAt       DateTime  @default(now())
+    updatedAt       DateTime  @updatedAt
+    product         Product[]
+
+    @@map("discount")
+}
+
+model deliveryAddress {
+    deliveryAddressID Int      @id @default(autoincrement())
+    addressDetail     String
+    numberPhone       String
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+    customerID        Int
+    customer          Customer @relation(fields: [customerID], references: [customerID])
+
+    @@map("deliveryaddress")
+}
+
+model Cart {
+    customer     Customer @relation(fields: [customerID], references: [customerID])
+    customerID   Int
+    product      Product  @relation(fields: [productID], references: [productID])
+    productID    Int
+    productCount Int      @default(1)
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+
+    @@id([customerID, productID])
+    @@map("cart")
+}
+
+model Order {
+    orderID      Int            @id @default(autoincrement())
+    orderStatus  Int            @default(0)
+    orderDate    DateTime       @default(now())
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    customer     Customer       @relation(fields: [customerID], references: [customerID])
+    customerID   Int
+    orderDetails OrderDetails[]
+
+    @@map("order")
+}
+
+model OrderDetails {
+    order        Order    @relation(fields: [orderID], references: [orderID])
+    orderID      Int
+    product      Product  @relation(fields: [productID], references: [productID])
+    productID    Int
+    productCount Int
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+
+    @@id([orderID, productID])
+    @@map("orderdetails")
+}
+
+model ProductReceipt {
+    receiptID             Int                     @id @default(autoincrement())
+    receiptDate           DateTime                @default(now())
+    admin                 Admin                   @relation(fields: [adminID], references: [adminID])
+    adminID               Int
+    createdAt             DateTime                @default(now())
+    updatedAt             DateTime                @updatedAt
+    productReceiptDetails ProductReceiptDetails[]
+
+    @@map("productreceipt")
+}
+
+model ProductReceiptDetails {
+    productReceipt ProductReceipt @relation(fields: [receiptID], references: [receiptID])
+    receiptID      Int
+    product        Product        @relation(fields: [productID], references: [productID])
+    productID      Int
+    createdAt      DateTime       @default(now())
+    updatedAt      DateTime       @updatedAt
+
+    @@id([receiptID, productID])
+    @@map("productreceiptdetails")
+}
