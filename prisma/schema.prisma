@@ -2,196 +2,197 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Person {
-    personID    Int       @id @default(autoincrement())
-    firstName   String
-    lastName    String
-    dob         DateTime  @db.Date
-    address     String
-    numberPhone String    @unique
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-    customer    Customer?
-    staff       Staff?
-    admin       Admin?
+  personID    String    @id @default(uuid()) @map("person_id")
+  firstName   String    @map("first_name")
+  lastName    String    @map("last_name")
+  dob         DateTime  @db.Date
+  address     String
+  numberPhone String    @unique @map("number_phone")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  customer    Customer?
+  staff       Staff?
+  admin       Admin?
 
-    @@map("person")
+  @@map("person")
 }
 
 model Customer {
-    customerID      Int               @id
-    customer        Person            @relation(fields: [customerID], references: [personID])
-    deliveryAddress deliveryAddress[]
-    cart            Cart[]
-    orders          Order[]
-    account         Account           @relation(fields: [accountID], references: [accountID])
-    accountID       Int               @unique
+  customerID      String            @id @map("customer_id")
+  customer        Person            @relation(fields: [customerID], references: [personID])
+  deliveryAddress deliveryAddress[]
+  cart            Cart[]
+  orders          Order[]
+  account         Account           @relation(fields: [accountID], references: [accountID])
+  accountID       String            @unique @map("account_id")
 
-    @@map("customer")
+  @@map("customer")
 }
 
 model Staff {
-    staffID   Int     @id
-    staff     Person  @relation(fields: [staffID], references: [personID])
-    account   Account @relation(fields: [accountID], references: [accountID])
-    accountID Int     @unique
+  staffID   String  @id @map("staff_id")
+  staff     Person  @relation(fields: [staffID], references: [personID])
+  account   Account @relation(fields: [accountID], references: [accountID])
+  accountID String  @unique @map("account_id")
 
-    @@map("staff")
+  @@map("staff")
 }
 
 model Admin {
-    adminID        Int              @id
-    admin          Person           @relation(fields: [adminID], references: [personID])
-    account        Account          @relation(fields: [accountID], references: [accountID])
-    accountID      Int              @unique
-    productReceipt ProductReceipt[]
+  adminID        String           @id @map("admin_id")
+  admin          Person           @relation(fields: [adminID], references: [personID])
+  account        Account          @relation(fields: [accountID], references: [accountID])
+  accountID      String           @unique @map("account_id")
+  productReceipt ProductReceipt[]
 
-    @@map("admin")
+  @@map("admin")
 }
 
 model Account {
-    accountID Int       @id @default(autoincrement())
-    email     String    @unique
-    password  String
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    roleID    Int
-    role      Role      @relation(fields: [roleID], references: [roleID])
-    customer  Customer?
-    staff     Staff?
-    admin     Admin?
+  accountID String    @id @default(uuid()) @map("account_id")
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  roleID    String    @map("role_id")
+  role      Role      @relation(fields: [roleID], references: [roleID])
+  customer  Customer?
+  staff     Staff?
+  admin     Admin?
 
-    @@map("account")
+  @@map("account")
 }
 
 model Role {
-    roleID   Int       @id @default(autoincrement())
-    account  Account[]
-    roleName String
+  roleID   String    @id @default(uuid()) @map("role_id")
+  account  Account[]
+  roleName String    @map("role_name")
 
-    @@map("role")
+  @@map("role")
 }
 
 model Product {
-    productID             Int                     @id @default(autoincrement())
-    productName           String                  @unique
-    productPrice          BigInt
-    productCount          BigInt
-    productNote           String?
-    createdAt             DateTime                @default(now())
-    updatedAt             DateTime                @updatedAt
-    typeOfProductID       Int
-    typeOfProduct         TypeOfProduct           @relation(fields: [typeOfProductID], references: [typeID])
-    discountID            Int?
-    discount              Discount?               @relation(fields: [discountID], references: [discountID])
-    Cart                  Cart[]
-    orderDetails          OrderDetails[]
-    productReceiptDetails ProductReceiptDetails[]
+  productID             String                  @id @default(uuid()) @map("product_id")
+  productName           String                  @unique @map("product_name")
+  productPrice          BigInt                  @map("product_price")
+  productCount          BigInt                  @map("product_count")
+  productNote           String?                 @map("product_note")
+  productImage          String                  @map("product_image")
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
+  typeOfProductID       String                  @map("type_of_product_id")
+  typeOfProduct         TypeOfProduct           @relation(fields: [typeOfProductID], references: [typeID])
+  discountID            String?                 @map("discount_id")
+  discount              Discount?               @relation(fields: [discountID], references: [discountID])
+  Cart                  Cart[]
+  orderDetails          OrderDetails[]
+  productReceiptDetails ProductReceiptDetails[]
 
-    @@map("product")
+  @@map("product")
 }
 
 model TypeOfProduct {
-    typeID    Int       @id @default(autoincrement())
-    typeName  String    @unique
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    product   Product[]
+  typeID    String    @id @default(uuid()) @map("type_id")
+  typeName  String    @unique @map("type_name")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  product   Product[]
 
-    @@map("typeofproduct")
+  @@map("type_of_product")
 }
 
 model Discount {
-    discountID      Int       @id @default(autoincrement())
-    discountPercent Int       @default(0)
-    startDate       DateTime
-    endDate         DateTime
-    createdAt       DateTime  @default(now())
-    updatedAt       DateTime  @updatedAt
-    product         Product[]
+  discountID      String    @id @default(uuid()) @map("discount_id")
+  discountPercent Int       @default(0) @map("discount_percent")
+  startDate       DateTime  @map("start_date")
+  endDate         DateTime  @map("end_date")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  product         Product[]
 
-    @@map("discount")
+  @@map("discount")
 }
 
 model deliveryAddress {
-    deliveryAddressID Int      @id @default(autoincrement())
-    addressDetail     String
-    numberPhone       String
-    createdAt         DateTime @default(now())
-    updatedAt         DateTime @updatedAt
-    customerID        Int
-    customer          Customer @relation(fields: [customerID], references: [customerID])
+  deliveryAddressID String   @id @default(uuid()) @map("delivery_address_id")
+  addressDetail     String   @map("address_detail")
+  numberPhone       String   @map("number_phone")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  customerID        String   @map("customer_id")
+  customer          Customer @relation(fields: [customerID], references: [customerID])
 
-    @@map("deliveryaddress")
+  @@map("delivery_address")
 }
 
 model Cart {
-    customer     Customer @relation(fields: [customerID], references: [customerID])
-    customerID   Int
-    product      Product  @relation(fields: [productID], references: [productID])
-    productID    Int
-    productCount Int      @default(1)
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+  customer     Customer @relation(fields: [customerID], references: [customerID])
+  customerID   String   @map("customer_id")
+  product      Product  @relation(fields: [productID], references: [productID])
+  productID    String   @map("product_id")
+  productCount Int      @default(1) @map("product_count")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
-    @@id([customerID, productID])
-    @@map("cart")
+  @@id([customerID, productID])
+  @@map("cart")
 }
 
 model Order {
-    orderID      Int            @id @default(autoincrement())
-    orderStatus  Int            @default(0)
-    orderDate    DateTime       @default(now())
-    createdAt    DateTime       @default(now())
-    updatedAt    DateTime       @updatedAt
-    customer     Customer       @relation(fields: [customerID], references: [customerID])
-    customerID   Int
-    orderDetails OrderDetails[]
+  orderID      String         @id @default(uuid()) @map("order_id")
+  orderStatus  Int            @default(0) @map("order_status")
+  orderDate    DateTime       @default(now()) @map("order_date")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  customer     Customer       @relation(fields: [customerID], references: [customerID])
+  customerID   String         @map("customer_id")
+  orderDetails OrderDetails[]
 
-    @@map("order")
+  @@map("order")
 }
 
 model OrderDetails {
-    order        Order    @relation(fields: [orderID], references: [orderID])
-    orderID      Int
-    product      Product  @relation(fields: [productID], references: [productID])
-    productID    Int
-    productCount Int
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+  order        Order    @relation(fields: [orderID], references: [orderID])
+  orderID      String   @map("order_id")
+  product      Product  @relation(fields: [productID], references: [productID])
+  productID    String   @map("product_id")
+  productCount Int      @map("product_count")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
-    @@id([orderID, productID])
-    @@map("orderdetails")
+  @@id([orderID, productID])
+  @@map("order_details")
 }
 
 model ProductReceipt {
-    receiptID             Int                     @id @default(autoincrement())
-    receiptDate           DateTime                @default(now())
-    admin                 Admin                   @relation(fields: [adminID], references: [adminID])
-    adminID               Int
-    createdAt             DateTime                @default(now())
-    updatedAt             DateTime                @updatedAt
-    productReceiptDetails ProductReceiptDetails[]
+  receiptID             String                  @id @default(uuid()) @map("receipt_id")
+  receiptDate           DateTime                @default(now()) @map("receipt_date")
+  admin                 Admin                   @relation(fields: [adminID], references: [adminID])
+  adminID               String                  @map("admin_id")
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
+  productReceiptDetails ProductReceiptDetails[]
 
-    @@map("productreceipt")
+  @@map("product_receipt")
 }
 
 model ProductReceiptDetails {
-    productReceipt ProductReceipt @relation(fields: [receiptID], references: [receiptID])
-    receiptID      Int
-    product        Product        @relation(fields: [productID], references: [productID])
-    productID      Int
-    createdAt      DateTime       @default(now())
-    updatedAt      DateTime       @updatedAt
+  productReceipt ProductReceipt @relation(fields: [receiptID], references: [receiptID])
+  receiptID      String         @map("receipt_id")
+  product        Product        @relation(fields: [productID], references: [productID])
+  productID      String         @map("product_id")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
 
-    @@id([receiptID, productID])
-    @@map("productreceiptdetails")
+  @@id([receiptID, productID])
+  @@map("product_receipt_details")
 }
