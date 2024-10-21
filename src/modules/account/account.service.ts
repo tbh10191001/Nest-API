@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable({})
 export class AccountService {
-  constructor() {}
+  constructor(private prismaService: PrismaService) {}
 
   //register
   register(body: any) {
@@ -19,7 +20,15 @@ export class AccountService {
     };
   }
   //forgot password
-  forgotPassword() {}
+  forgotPassword() {
+    return {
+      message: 'Password reset link sent to your email',
+    };
+  }
   //reset password
-  resetPassword() {}
+  resetPassword() {
+    return {
+      message: 'Password reset successful',
+    };
+  }
 }

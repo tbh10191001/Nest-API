@@ -1,13 +1,9 @@
 import { Expose } from 'class-transformer';
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
-export class AccountDTO {
-  @IsNotEmpty()
-  @IsEmail()
-  @Expose()
+export class UserDTO {
+  id: string;
   email: string;
+  displayName: string;
 
-  @IsNotEmpty()
-  @Expose()
-  password: string;
 }
