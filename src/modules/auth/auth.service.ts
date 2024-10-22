@@ -9,13 +9,13 @@ export class AuthService {
     async validate(user: UserDTO) {
         console.log('AuthService');
         console.log('details', user);
-        if(user) {
-            const isAccount = await this.prisma.account.findUnique({
-                where: {
-                    email: user.email
-                }
-            })
-        }
+        // if(user) {
+        //     const isAccount = await this.prisma.account.findUnique({
+        //         where: {
+        //             email: user.email
+        //         }
+        //     })
+        // }
         return user
     }
   
