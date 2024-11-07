@@ -14,11 +14,11 @@ model Person {
   personID    String    @id @default(uuid()) @map("person_id")
   firstName   String    @map("first_name")
   lastName    String    @map("last_name")
-  dob         DateTime  @db.Date
-  address     String
-  numberPhone String    @unique @map("number_phone")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  dob         DateTime? @db.Date
+  address     String?
+  numberPhone String?   @unique @map("number_phone")
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @updatedAt @map("updated_at")
   customer    Customer?
   staff       Staff?
   admin       Admin?
@@ -27,13 +27,14 @@ model Person {
 }
 
 model Customer {
-  customerID      String            @id @map("customer_id")
+  customerID      String            @id @default(uuid()) @map("customer_id")
   customer        Person            @relation(fields: [customerID], references: [personID])
+  picture         String            @map("picture")
+  email           String            @unique
   deliveryAddress deliveryAddress[]
   cart            Cart[]
   orders          Order[]
-  account         Account           @relation(fields: [accountID], references: [accountID])
-  accountID       String            @unique @map("account_id")
+  Account         Account[]
 
   @@map("customer")
 }
@@ -58,16 +59,16 @@ model Admin {
 }
 
 model Account {
-  accountID String    @id @default(uuid()) @map("account_id")
-  email     String    @unique
-  password  String
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  roleID    String    @map("role_id")
-  role      Role      @relation(fields: [roleID], references: [roleID])
-  customer  Customer?
-  staff     Staff?
-  admin     Admin?
+  accountID          String    @id @default(uuid()) @map("account_id")
+  email              String    @unique
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  roleID             String    @map("role_id")
+  role               Role      @relation(fields: [roleID], references: [roleID])
+  staff              Staff?
+  admin              Admin?
+  Customer           Customer? @relation(fields: [customerCustomerID], references: [customerID])
+  customerCustomerID String?
 
   @@map("account")
 }
