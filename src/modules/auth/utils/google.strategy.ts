@@ -14,11 +14,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         })// để gọi ra constructor của parent class
     }
 
-    async validate(accessToken: string, refreshToken: string, profile: Profile) {
+    async validate(accessToken: string, refreshToken: string, profile: any) {
+        const { id, displayName, emails, photos } = profile;
         console.log('accessToken', accessToken);
         console.log('refreshToken', refreshToken);
-        console.log('profile', profile);
-        const user = await this.authService.validate({id: profile.id, email: profile.emails[0].value, displayName: profile.displayName});
+        const user = await this.authService.validate({id: id, email: emails[0].value, displayName: displayName, picture: photos[0].value});
         return user;
     }
 }

@@ -6,13 +6,16 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { SessionSerializer } from './utils/serializer';
 
 @Module({
-    imports: [],
-    controllers: [AuthController],
-    providers: [GoogleStrategy, PrismaService, SessionSerializer, {
-        provide: 'AUTH_SERVICE',
-        useClass: AuthService
-    }],
+  imports: [],
+  controllers: [AuthController],
+  providers: [
+    GoogleStrategy,
+    PrismaService,
+    SessionSerializer,
+    {
+      provide: 'AUTH_SERVICE',
+      useClass: AuthService,
+    },
+  ],
 })
-export class AuthModule {
-
-}
+export class AuthModule {}
