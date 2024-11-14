@@ -1,12 +1,12 @@
 import { Controller, Get, UseGuards } from "@nestjs/common";
-import { GoogleAuthGuard } from "./utils/Guards";
+import { GoogleAuthGuard } from "./guards/guards.google";
 
-@Controller('auth')
+@Controller('auth') // Nhiệm vụ: nhận dữ liệu đầu vào và trả dữ liệu đầu ra
 export class AuthController {
-
+    
     @Get('google/login')
     @UseGuards(GoogleAuthGuard)
-    handleLogin() {
+    loginWithGoogle() {
         return {
             message: 'Login with google',
         }
@@ -15,7 +15,7 @@ export class AuthController {
     //api/auth/google/redirect
     @Get('google/redirect')
     @UseGuards(GoogleAuthGuard)
-    handleRedirect() {
+    redirectGoogle() {
         return {
             message: 'Redirect to google',
         }
