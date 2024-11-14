@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserDTO } from './dto/user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+
 @Injectable() // tag cho nest biết đây là Provider
 // Serveice: xử lý logic: query database, xử lý dữ liệu, gửi mail, ...
 export class AuthService {
@@ -33,6 +34,7 @@ export class AuthService {
       }
     } catch (error) {
       console.log('error', error);
+
     }
   }
 }
