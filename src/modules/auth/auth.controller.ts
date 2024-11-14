@@ -1,9 +1,9 @@
 import { Controller, Get, UseGuards } from "@nestjs/common";
 import { GoogleAuthGuard } from "./utils/Guards";
 
-@Controller('auth')
+@Controller('auth') // Nhiệm vụ: nhận dữ liệu đầu vào và trả dữ liệu đầu ra
 export class AuthController {
-
+    
     @Get('google/login')
     @UseGuards(GoogleAuthGuard)
     handleLogin() {
