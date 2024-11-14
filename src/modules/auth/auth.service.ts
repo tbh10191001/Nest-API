@@ -11,6 +11,7 @@ export class AuthService {
     async validate(user: UserDTO) {
         console.log('AuthService');
         console.log('details', user);
+
         return user
     }
   
