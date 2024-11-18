@@ -1,11 +1,11 @@
 import { Expose } from 'class-transformer';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class LoginDTO {
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Username is required' })
   @Expose()
   username: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Password is required' })
   password: string;
 }

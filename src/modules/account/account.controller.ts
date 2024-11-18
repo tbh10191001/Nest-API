@@ -1,6 +1,15 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { LoginDTO } from './dto/login.dto';
 import { AccountService } from './account.service';
+import { connect } from 'http2';
 
 @Controller('account')
 export class AccountController {
@@ -13,8 +22,12 @@ export class AccountController {
 
   //api/account/login
   @Post('login')
-  login(@Body() body: LoginDTO) {
-    console.log(body);
-    return this.accountService.login(body);
+  login(@Req() req: any) {
+    try {
+      const { body } = req;
+      return this.accountService.login(body);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 }

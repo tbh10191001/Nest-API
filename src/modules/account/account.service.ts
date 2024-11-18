@@ -1,9 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { LoginDTO } from './dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
 
-@Injectable({})
+@Injectable()
 export class AccountService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   //register
   register(body: any) {
@@ -13,11 +22,27 @@ export class AccountService {
     };
   }
   //login
-  login(body: any) {
-    console.log(body);
-    return {
-      message: 'User logged in successfully',
-    };
+  async login(body: LoginDTO) {
+    const { username, password } = body;
+    try {
+      const user = await this.prismaService.account.findFirst({
+        where: {
+          username: username,
+          password: password,
+        },
+      });
+      if (!user) {
+        throw new NotFoundException('User not found', {
+          cause: new Error(),
+          description: 'Invalid username or password',
+        });
+      } else {
+        const token = await this.jwtService.sign({ username: user.username });
+        return { token: token };
+      }
+    } catch (error) {
+      return error.response;
+    }
   }
   //forgot password
   forgotPassword() {
